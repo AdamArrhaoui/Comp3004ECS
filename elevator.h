@@ -28,15 +28,24 @@ public:
     int getCarNum() const;
     std::set<int> getDestinations() const;
 
+    ButtonPanel *getButtonPanel() const;
+
+    FloorSensor *getFloorSensor() const;
+
+    Display *getDisplay() const;
+
+    Door *getDoor() const;
+
 public slots:
     void stop();
     void emergencyStop();
     void start(char direction);
     void newFloor(int floorNum);
-    void carRequest(int floorNum);
+    void addDestination(int floorNum);
 
 signals:
     void newFloorReached(int carNum, int floorNum);
+    void carRequest(int carNum, int floorNum);
 
 private:
     ECS* m_ecs;

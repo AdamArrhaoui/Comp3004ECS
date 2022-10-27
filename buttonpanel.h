@@ -14,13 +14,19 @@ class ButtonPanel : public QObject
     Q_OBJECT
 public:
     ButtonPanel(Elevator* elevator);
-public slots:
     void pressDestButton(int floorNum);
+
+public slots:
     void unpressDestButton(int floorNum);
-    void pressCloseDoor();
-    void holdOpenDoor();
-    void releaseOpenDoor();
-    void pressEmergencyButton();
+
+signals:
+    void destButtonPressed(int floorNum);
+    void closeDoorButtonPressed();
+    void openDoorButtonHeld();
+    void openDoorButtonReleased();
+    void emergencyButtonPressed();
+
+
 private:
     Elevator* m_elevator;
     QSet<int> m_pressedDestButtons;

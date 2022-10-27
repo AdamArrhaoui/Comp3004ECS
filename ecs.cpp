@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include "ecs.h"
 
 
@@ -8,8 +10,13 @@ ECS::ECS(QObject* parent, int numFloors, int numElevators)
         m_floors.append(new Floor(this, i));
     }
     for(int i = 0; i < numElevators; ++i){
-        m_elevators.append(new Elevator(this, i));
+        Elevator* newElevator = new Elevator(this, i);
+        m_elevators.append(newElevator);
+        // Connect Elevator signals to ECS slots
+        connect(newElevator, &Elevator::newFloorReached, this, &ECS::carReachedFloor);
+        connect(newElevator, &Elevator::carRequest, this, &ECS::carRequest);
     }
+    qDebug() << "Created ECS for building with" << numFloors << "floors and" << numElevators << "elevators.";
 }
 
 QVector<QPair<int, char> > ECS::getFloorRequests() const
@@ -34,17 +41,16 @@ void ECS::setAllocationStrategy(AllocationStrategy *value)
 
 void ECS::floorRequest(int floorNum, char direction)
 {
-
 }
 
 void ECS::carReachedFloor(int carNum, int floorNum)
 {
-
+    qDebug() << "Car number" << carNum << "has arrived at floor number" << floorNum;
 }
 
 void ECS::carRequest(int carNum, int floorNum)
 {
-
+    qDebug() << "Car number" << carNum << "has requested floor number" << floorNum;
 }
 
 void ECS::readyToMove(int carNum)
