@@ -31,7 +31,7 @@ signals:
 
 private:
     Elevator* m_elevator;
-    static int m_topFloor;
+    static int s_topFloor;
     QSet<int> m_pressedDestButtons;
     bool m_openDoorHeld;
 };

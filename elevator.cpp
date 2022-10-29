@@ -1,6 +1,6 @@
 #include "elevator.h"
 
-int Elevator::m_topFloor;
+int Elevator::s_topFloor;
 
 Elevator::Elevator(ECS* ecs, int carNum)
     :QObject(ecs)
@@ -10,11 +10,17 @@ Elevator::Elevator(ECS* ecs, int carNum)
     ,m_display(new Display(this))
     ,m_floorSensor(new FloorSensor(this))
     ,m_buttonPanel(new ButtonPanel(this))
-    ,m_currFloor(0)
-    ,m_currDirection('i')
 {
     connect(m_buttonPanel, SIGNAL(destButtonPressed(int)), this, SLOT(addDestination(int)));
     connect(m_buttonPanel, SIGNAL(emergencyButtonPressed()), this, SLOT(emergencyStop()));
+}
+
+void Elevator::openDoor() const
+{
+    // Check if elevator is stopped
+    if(m_moveState == Idle or m_moveState == Stopped){
+        m_door->open();
+    }
 }
 
 std::set<int> Elevator::getDestinations() const
@@ -24,7 +30,20 @@ std::set<int> Elevator::getDestinations() const
 
 void Elevator::stop()
 {
-
+    if(m_destinations.size() == 0){
+        // No more destinations, idle the elevator
+        m_moveState = Idle;
+        m_currDirection = 'i';
+    } else {
+        // There are still more destinations, temporarily stop the elevator
+        m_moveState = Stopped;
+        // If elevator stopped at top/bottom floor, reverse currDirection
+        if(m_currFloor == s_topFloor){
+            m_currDirection = 'd';
+        } else if(m_currFloor == 0){
+            m_currDirection = 'u';
+        }
+    }
 }
 
 void Elevator::emergencyStop()
@@ -34,17 +53,23 @@ void Elevator::emergencyStop()
 
 void Elevator::start(char direction)
 {
-
+    m_currDirection = direction;
+    m_moveState = Moving;
 }
 
 void Elevator::newFloor(int floorNum)
 {
+    m_currFloor = floorNum;
     emit newFloorReached(m_carNum, floorNum);
-    // If floor is in m_destinations, stop elevator and remove floor from m_destinations
+    // If floor is in m_destinations, remove floor from m_destinations then stop elevator
     auto it = m_destinations.find(floorNum);
     if(it != m_destinations.end()){
-        stop();
         m_destinations.erase(it);
+        stop();
+        return;
+    }
+    if(floorNum == s_topFloor){
+        stop();
     }
 }
 
@@ -58,9 +83,19 @@ void Elevator::addDestination(int floorNum)
     }
 }
 
+int Elevator::getCurrFloor() const
+{
+    return m_currFloor;
+}
+
+Elevator::MovementState Elevator::getMoveState() const
+{
+    return m_moveState;
+}
+
 void Elevator::setTopFloor(int topFloor)
 {
-    m_topFloor = topFloor;
+    s_topFloor = topFloor;
     ButtonPanel::setTopFloor(topFloor);
 }
 
