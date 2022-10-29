@@ -1,4 +1,4 @@
-#ifndef ELEVATOR_H
+﻿#ifndef ELEVATOR_H
 #define ELEVATOR_H
 
 #include <QObject>
@@ -22,8 +22,6 @@ class Elevator : public QObject
     Q_OBJECT
 public:
     Elevator(ECS* ecs, int carNum);
-    int currFloor;
-    char currDirection;
 
     int getCarNum() const;
     std::set<int> getDestinations() const;
@@ -35,6 +33,8 @@ public:
     Display *getDisplay() const;
 
     Door *getDoor() const;
+
+    static void setTopFloor(int topFloor);
 
 public slots:
     void stop();
@@ -54,6 +54,13 @@ private:
     FloorSensor* m_floorSensor;
     ButtonPanel* m_buttonPanel;
     int m_carNum;
+    int m_currFloor;
+    /* Elevator Directions:
+     * 'i' Idle
+     * 'u' Up
+     * 'd' Down */
+    char m_currDirection;
+    static int m_topFloor;
     std::set<int> m_destinations;
 };
 

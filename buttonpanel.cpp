@@ -1,5 +1,7 @@
 #include "buttonpanel.h"
 
+int ButtonPanel::m_topFloor;
+
 ButtonPanel::ButtonPanel(Elevator* elevator)
     :QObject(elevator), m_elevator(elevator)
 {}
@@ -17,5 +19,10 @@ void ButtonPanel::unpressDestButton(int floorNum)
     if(m_pressedDestButtons.contains(floorNum)){
         m_pressedDestButtons.remove(floorNum);
     }
+}
+
+void ButtonPanel::setTopFloor(int topFloor)
+{
+    m_topFloor = topFloor;
 }
 

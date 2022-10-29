@@ -16,6 +16,8 @@ public:
     ButtonPanel(Elevator* elevator);
     void pressDestButton(int floorNum);
 
+    static void setTopFloor(int topFloor);
+
 public slots:
     void unpressDestButton(int floorNum);
 
@@ -29,6 +31,7 @@ signals:
 
 private:
     Elevator* m_elevator;
+    static int m_topFloor;
     QSet<int> m_pressedDestButtons;
     bool m_openDoorHeld;
 };

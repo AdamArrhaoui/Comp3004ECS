@@ -1,5 +1,7 @@
 #include "elevator.h"
 
+int Elevator::m_topFloor;
+
 Elevator::Elevator(ECS* ecs, int carNum)
     :QObject(ecs)
     ,m_ecs(ecs)
@@ -8,6 +10,8 @@ Elevator::Elevator(ECS* ecs, int carNum)
     ,m_display(new Display(this))
     ,m_floorSensor(new FloorSensor(this))
     ,m_buttonPanel(new ButtonPanel(this))
+    ,m_currFloor(0)
+    ,m_currDirection('i')
 {
     connect(m_buttonPanel, SIGNAL(destButtonPressed(int)), this, SLOT(addDestination(int)));
     connect(m_buttonPanel, SIGNAL(emergencyButtonPressed()), this, SLOT(emergencyStop()));
@@ -52,6 +56,12 @@ void Elevator::addDestination(int floorNum)
         m_destinations.insert(floorNum);
         emit carRequest(m_carNum, floorNum);
     }
+}
+
+void Elevator::setTopFloor(int topFloor)
+{
+    m_topFloor = topFloor;
+    ButtonPanel::setTopFloor(topFloor);
 }
 
 Door *Elevator::getDoor() const

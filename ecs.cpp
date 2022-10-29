@@ -9,6 +9,9 @@ ECS::ECS(QObject* parent, int numFloors, int numElevators)
     for(int i = 0; i < numFloors; ++i){
         m_floors.append(new Floor(this, i));
     }
+    // set top floors for elevator and button panel
+    Elevator::setTopFloor(numFloors - 1);
+
     for(int i = 0; i < numElevators; ++i){
         Elevator* newElevator = new Elevator(this, i);
         m_elevators.append(newElevator);
