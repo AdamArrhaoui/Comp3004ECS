@@ -44,9 +44,10 @@ public:
     int getCurrFloor() const;
 
 public slots:
+    void update();
+    void start(char direction);
     void stop();
     void emergencyStop();
-    void start(char direction);
     void newFloor(int floorNum);
     void addDestination(int floorNum);
 

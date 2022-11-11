@@ -15,17 +15,15 @@ Elevator::Elevator(ECS* ecs, int carNum)
     connect(m_buttonPanel, SIGNAL(emergencyButtonPressed()), this, SLOT(emergencyStop()));
 }
 
-void Elevator::openDoor() const
+void Elevator::update()
 {
-    // Check if elevator is stopped
-    if(m_moveState == Idle or m_moveState == Stopped){
-        m_door->open();
-    }
+
 }
 
-std::set<int> Elevator::getDestinations() const
+void Elevator::start(char direction)
 {
-    return m_destinations;
+    m_currDirection = direction;
+    m_moveState = Moving;
 }
 
 void Elevator::stop()
@@ -49,12 +47,6 @@ void Elevator::stop()
 void Elevator::emergencyStop()
 {
 
-}
-
-void Elevator::start(char direction)
-{
-    m_currDirection = direction;
-    m_moveState = Moving;
 }
 
 void Elevator::newFloor(int floorNum)
@@ -83,10 +75,30 @@ void Elevator::addDestination(int floorNum)
     }
 }
 
+void Elevator::openDoor() const
+{
+    // Check if elevator is stopped
+    if(m_moveState == Idle or m_moveState == Stopped){
+        m_door->open();
+    }
+}
+
+int Elevator::getCarNum() const
+{
+    return m_carNum;
+}
+
+std::set<int> Elevator::getDestinations() const
+{
+    return m_destinations;
+}
+
+
 int Elevator::getCurrFloor() const
 {
     return m_currFloor;
 }
+
 
 Elevator::MovementState Elevator::getMoveState() const
 {
@@ -119,7 +131,4 @@ ButtonPanel *Elevator::getButtonPanel() const
     return m_buttonPanel;
 }
 
-int Elevator::getCarNum() const
-{
-    return m_carNum;
-}
+
