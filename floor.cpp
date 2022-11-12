@@ -8,3 +8,8 @@ int Floor::getFloorNum() const
 {
     return m_floorNum;
 }
+
+void Floor::elevatorRequested(char direction)
+{
+
+}

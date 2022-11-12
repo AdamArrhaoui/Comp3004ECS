@@ -8,7 +8,7 @@
 
 class Elevator;
 
-class FloorSensor : QObject
+class FloorSensor : public QObject
 {
     Q_OBJECT
 public:

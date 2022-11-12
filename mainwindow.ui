@@ -10,11 +10,90 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="baseSize">
+   <size>
+    <width>3</width>
+    <height>3</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
-  <widget class="QMenuBar" name="menubar"/>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>140</y>
+      <width>381</width>
+      <height>291</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Elevator 1</string>
+    </property>
+    <widget class="QSplitter" name="floorButtonPicker">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>60</y>
+       <width>201</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Floor</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="floorSelector">
+      <property name="minimum">
+       <number>0</number>
+      </property>
+      <property name="maximum">
+       <number>4</number>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="floorButton">
+      <property name="text">
+       <string>Choose Floor</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QSplitter" name="floorNumberDisplay">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>30</y>
+       <width>171</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Current Floor</string>
+      </property>
+     </widget>
+     <widget class="QLCDNumber" name="lcdNumber"/>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>

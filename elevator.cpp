@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include "elevator.h"
 
 int Elevator::s_topFloor;
@@ -11,17 +13,58 @@ Elevator::Elevator(ECS* ecs, int carNum)
     ,m_floorSensor(new FloorSensor(this))
     ,m_buttonPanel(new ButtonPanel(this))
 {
+    connect(m_ecs, SIGNAL(updated()), this, SLOT(update()));
+    connect(m_floorSensor, SIGNAL(floorDetected(int)), this, SLOT(newFloor(int)));
     connect(m_buttonPanel, SIGNAL(destButtonPressed(int)), this, SLOT(addDestination(int)));
     connect(m_buttonPanel, SIGNAL(emergencyButtonPressed()), this, SLOT(emergencyStop()));
 }
 
 void Elevator::update()
 {
-
+    // Elevator Update Loop
+    if(m_moveState == Moving){
+        qDebug() << "I'm moving! Direction:" << m_currDirection << "Floor:" << m_currFloor << "Progress:" << m_currentProgress;
+        // Move elevator
+        m_currentProgress += s_moveSpeed;
+        // Elevator reached new floor
+        if(m_currentProgress >= 1.0){
+            m_currentProgress = 0;
+            if(m_currDirection == 'd'){
+                m_floorSensor->detectFloor(m_currFloor - 1);
+            } else {
+                m_floorSensor->detectFloor(m_currFloor + 1);
+            }
+        }
+    } else if (m_moveState == Stopped){
+        // Wait for door to be closed
+        if(m_door->state() == Door::Closed){
+            start(m_currDirection);
+        }
+    } else if (m_moveState == Idle){
+        // Wait for door to be closed
+        if(m_door->state() == Door::Closed){
+            //qDebug() << "Elevator" << m_carNum << "is idle and ready";
+        }
+    }
+    emit updated();
 }
 
 void Elevator::start(char direction)
 {
+    if(direction == 'd'){
+        if(m_currFloor == 0){
+            qWarning() << "Cannot move down, already on bottom floor!";
+            return;
+        }
+    } else if (direction == 'u'){
+        if(m_currFloor == s_topFloor){
+            qWarning() << "Cannot move up, already at top floor!";
+            return;
+        }
+    } else {
+        qWarning() << "Unrecognised direction '" << direction << "'. Only 'u' and 'd' are supported";
+        return;
+    }
     m_currDirection = direction;
     m_moveState = Moving;
 }
@@ -42,6 +85,7 @@ void Elevator::stop()
             m_currDirection = 'u';
         }
     }
+    m_door->open();
 }
 
 void Elevator::emergencyStop()
@@ -60,19 +104,28 @@ void Elevator::newFloor(int floorNum)
         stop();
         return;
     }
-    if(floorNum == s_topFloor){
+    if(floorNum == s_topFloor or floorNum == 0){
         stop();
     }
 }
 
 void Elevator::addDestination(int floorNum)
 {
+    if(floorNum == m_currFloor){
+        stop();
+        return;
+    }
     // If a new destination button for the elevator is pressed,
     // add the floor to elevators set of destinations and emit carRequest signal
     if(m_destinations.count(floorNum) == 0){
         m_destinations.insert(floorNum);
         emit carRequest(m_carNum, floorNum);
     }
+}
+
+char Elevator::getCurrDirection() const
+{
+    return m_currDirection;
 }
 
 void Elevator::openDoor() const
@@ -86,6 +139,11 @@ void Elevator::openDoor() const
 int Elevator::getCarNum() const
 {
     return m_carNum;
+}
+
+bool Elevator::isIdleAndReady() const
+{
+    return (m_moveState == Idle and m_door->state() == Door::Closed);
 }
 
 std::set<int> Elevator::getDestinations() const

@@ -18,11 +18,18 @@ public:
     void close();
     void ringBell();
 
+    DoorState state() const;
+
+public slots:
+    void update();
+
 private:
     Elevator* m_elevator;
     float m_openAmount = 0;
+    float m_currOpenTime = 0;
     DoorState m_state = Closed;
-    static float s_doorSpeed = 0.1;
+    static constexpr float s_doorSpeed = 0.25;
+    static constexpr int s_maxOpenTime = 5;
 };
 
 #endif // DOOR_H

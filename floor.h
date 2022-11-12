@@ -19,6 +19,8 @@ public:
     void inform(char direction);
     int getFloorNum() const;
 
+public slots:
+    void elevatorRequested(char direction);
 private:
     ECS* m_ecs;
     FloorButtons* m_floorButtons;

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QVector>
+#include <QSet>
 #include <QPair>
 
 #include "floor.h"
@@ -23,23 +24,28 @@ public:
 
     QVector<Floor*> getFloors() const;
     QVector<Elevator*> getElevators() const;
-    QVector<QPair<int, char> > getFloorRequests() const;
+    QVector<Elevator*> getIdleElevators() const;
+    QSet<QPair<int, char> > getFloorRequests() const;
     QVector<QPair<int, int> > getCarRequests() const;
 
     AllocationStrategy *getAllocationStrategy() const;
     void setAllocationStrategy(AllocationStrategy *value);
 
 public slots:
+    void update();
     void floorRequest(int floorNum, char direction);
     void carReachedFloor(int carNum, int floorNum);
     void carRequest(int carNum, int floorNum);
     void readyToMove(int carNum);
 
+signals:
+    void updated();
+
 private:
     AllocationStrategy* m_allocationStrategy;
     QVector<Floor*> m_floors;
     QVector<Elevator*> m_elevators;
-    QVector<QPair<int, char>> m_floorRequests;
+    QSet<QPair<int, char>> m_floorRequests;
     QVector<QPair<int, int>> m_carRequests;
 };
 
